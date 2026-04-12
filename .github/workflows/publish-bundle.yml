@@ -1,0 +1,46 @@
+name: Publish Package Bundle
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_path:
+        description: Bundle manifest to publish
+        required: false
+        default: bundle-manifests/bookworm-arm64-bootstrap-1.json
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Assemble package bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/assemble_bundle.py "${{ github.event.inputs.manifest_path }}" dist
+          cat .bundle-output >> "$GITHUB_ENV"
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-bundle-${{ env.bundle_tag }}
+          path: |
+            dist/**/*.deb
+            dist/${{ env.manifest_asset }}
+          if-no-files-found: error
+
+      - name: Publish bundle release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.bundle_tag }}
+          files: |
+            dist/**/*.deb
+            dist/${{ env.manifest_asset }}
+          fail_on_unmatched_files: true
