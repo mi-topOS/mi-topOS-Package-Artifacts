@@ -3,7 +3,9 @@
 import argparse
 import hashlib
 import json
+import shutil
 import subprocess
+import zipfile
 from pathlib import Path
 
 
@@ -30,24 +32,56 @@ def main() -> int:
     for source in manifest["sources"]:
         repo = source["repo"]
         release_tag = source["release_tag"]
+        github_repo = source.get("github", f"mi-topOS/{repo}")
+        deb_zip_pattern = source.get("deb_zip_pattern")
         repo_dir = packages_dir / repo
         repo_dir.mkdir(parents=True, exist_ok=True)
 
-        subprocess.run(
-            [
-                "gh",
-                "release",
-                "download",
-                release_tag,
-                "--repo",
-                f"mi-topOS/{repo}",
-                "--pattern",
-                "*.deb",
-                "--dir",
-                str(repo_dir),
-            ],
-            check=True,
-        )
+        if deb_zip_pattern:
+            subprocess.run(
+                [
+                    "gh",
+                    "release",
+                    "download",
+                    release_tag,
+                    "--repo",
+                    github_repo,
+                    "--pattern",
+                    deb_zip_pattern,
+                    "--dir",
+                    str(repo_dir),
+                ],
+                check=True,
+            )
+            for zpath in list(repo_dir.glob("*.zip")):
+                with zipfile.ZipFile(zpath, "r") as zf:
+                    zf.extractall(repo_dir)
+                zpath.unlink()
+            for deb in sorted(repo_dir.rglob("*.deb")):
+                if deb.parent != repo_dir:
+                    dest = repo_dir / deb.name
+                    if dest.exists():
+                        dest.unlink()
+                    shutil.move(str(deb), dest)
+            artifacts_dir = repo_dir / "artifacts"
+            if artifacts_dir.is_dir():
+                shutil.rmtree(artifacts_dir, ignore_errors=True)
+        else:
+            subprocess.run(
+                [
+                    "gh",
+                    "release",
+                    "download",
+                    release_tag,
+                    "--repo",
+                    github_repo,
+                    "--pattern",
+                    "*.deb",
+                    "--dir",
+                    str(repo_dir),
+                ],
+                check=True,
+            )
 
         for package_path in sorted(repo_dir.glob("*.deb")):
             package_entries.append(

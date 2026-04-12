@@ -25,6 +25,12 @@
       "release_tag": "bookworm-arm64-bootstrap-1"
     },
     {
+      "repo": "i2c-tools-extra",
+      "github": "pi-top/i2c-tools-extra",
+      "release_tag": "v1.0.2-6",
+      "deb_zip_pattern": "bookworm-arm64.deb.zip"
+    },
+    {
       "repo": "mi-top-4-Display-Port",
       "release_tag": "bookworm-arm64-bootstrap-1"
     },
