@@ -1,0 +1,44 @@
+{
+  "bundle_tag": "bookworm-arm64-bootstrap-2",
+  "distro": "bookworm",
+  "architecture": "arm64",
+  "manifest_asset": "packages-bookworm-arm64.json",
+  "sources": [
+    {
+      "repo": "mi-topOS-Core-Packages",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    },
+    {
+      "repo": "mi-topOS-System-Modifications",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    },
+    {
+      "repo": "mi-topOS-Network-Modifications",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    },
+    {
+      "repo": "mi-topd",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    },
+    {
+      "repo": "mi-top-Python-SDK",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    },
+    {
+      "repo": "i2c-tools-extra",
+      "release_tag": "bookworm-arm64-bootstrap-2"
+    },
+    {
+      "repo": "mi-top-4-Display-Port",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    },
+    {
+      "repo": "mi-top-4-Miniscreen",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    },
+    {
+      "repo": "mi-top-Wi-Fi-Access-Point-and-Station-Mode",
+      "release_tag": "bookworm-arm64-bootstrap-1"
+    }
+  ]
+}
